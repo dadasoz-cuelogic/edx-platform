@@ -36,7 +36,7 @@
 		</div>
 	</div>
 
-	<%= fields %>
+	<%= HtmlUtils.HTML(fieldsHtml) %>
 
 	<div class="cta-wrapper clearfix">
 		<a href="<%- student_faq_url %>" class="nav-link"><%- interpolate_text(
