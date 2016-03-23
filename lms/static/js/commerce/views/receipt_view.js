@@ -67,6 +67,7 @@ var edx = edx || {};
             context.course_key = this.courseKey;
             context.username = this.username;
             context.platformName = this.$el.data('platform-name');
+            context.fulfillment_instructions = edx.HtmlUtils.HTML(context.fulfillment_instructions);
             providerDiv.html(_.template(templateHtml)(context)).removeClass('hidden');
         },
 
