@@ -183,3 +183,6 @@ pynliner==0.5.2
 
 # for sailthru integration
 sailthru-client==2.2.3
+
+# django current site middleware with default site
+edx-django-sites-extensions==1.0.0
