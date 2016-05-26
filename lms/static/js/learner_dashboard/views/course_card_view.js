@@ -6,6 +6,7 @@
             'underscore',
             'gettext',
             'edx-ui-toolkit/js/utils/html-utils',
+            'js/learner_dashboard/models/course_enroll_model',
             'js/learner_dashboard/views/course_enroll_view',
             'text!../../../templates/learner_dashboard/course_card.underscore'
            ],
@@ -15,6 +16,7 @@
              _,
              gettext,
              HtmlUtils,
+             EnrollModel,
              CourseEnrollView,
              pageTpl
          ) {
@@ -24,7 +26,11 @@
                 tpl: HtmlUtils.template(pageTpl),
 
                 initialize: function() {
+                    this.enrollModel = new EnrollModel({}, {
+                        courseId: this.model.get('course_key')
+                    });
                     this.render();
+                    this.listenTo(this.model, 'change', this.render);
                 },
 
                 render: function() {
@@ -34,11 +40,16 @@
                 },
 
                 postRender: function(){
-                    this.enrollView = new CourseEnrollView({
-                        $el: this.$('.course-actions'),
-                        model: this.model,
-                        context: this.context
-                    });
+                    HtmlUtils.setHtml(
+                        this.$('.course-actions'),
+                        HtmlUtils.HTML(
+                            new CourseEnrollView({
+                                model: this.model,
+                                context: this.context,
+                                enrollModel: this.enrollModel
+                            }).$el
+                        )
+                    );
                 }
             });
         }

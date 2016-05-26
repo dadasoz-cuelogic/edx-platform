@@ -29,6 +29,12 @@
       margin-bottom: $baseline/2 + px;
       text-transform: uppercase;
     }
+    .run-select-container{
+      margin-bottom: $baseline + px;
+      .run-select{
+        width: $baseline*10 + px;
+      }
+    }
     .enroll-button{
       width: $baseline*10 + px;
       text-align: center;

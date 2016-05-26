@@ -4,7 +4,7 @@
             <img
                 class="header-img"
                 src="<%- course_image_url %>"
-                alt="<%= interpolate(gettext('%(courseName)s Home Page.'), {courseName: display_name}, true)%>"/>
+                alt="<%= interpolate(gettext('%(courseName)s Home Page.'), {courseName: display_name}, true) %>"/>
         </a>
         <div class="course-details">
             <h3 class="course-title">

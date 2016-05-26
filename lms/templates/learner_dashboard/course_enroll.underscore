@@ -5,6 +5,21 @@
     </a>
 <% }else{ %>
     <div class="enrollment-info"><%- gettext('not enrolled') %></div>
+    <% if (run_modes.length > 1){ %>
+        <div class="run-select-container">
+            <select class="run-select">
+                <% _.each (run_modes, function(runMode){ %>
+                    <option value="<%- runMode.run_key %>">
+                        <%= interpolate(
+                            gettext('Starts %(start)s'),
+                            { start: runMode.start_date },
+                            true)
+                        %>
+                    </option>
+                <% }); %>
+            </select>
+        </div>
+    <% } %>
     <button type="button" class="btn-brand btn enroll-button">
         <%- gettext('Enroll Now') %>
     </button>

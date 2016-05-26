@@ -32,7 +32,7 @@ define([
                         is_enrolled: true,
                         certificate_url: '',
                     }]
-                };
+                },
 
             setupView = function(isEnrolled){
                 context.run_modes[0].is_enrolled = isEnrolled;
@@ -41,6 +41,17 @@ define([
                 view = new CourseCardView({
                     model: courseCardModel
                 });
+            },
+
+            validateEnrolledCard = function(){
+                //DRY validation for course card in enrolled state
+                expect(view.$('.header-img').attr('src')).toEqual(context.run_modes[0].course_image_url);
+                expect(view.$('.course-details .course-title-link').text().trim()).toEqual(context.display_name);
+                expect(view.$('.course-details .course-title-link').attr('href')).toEqual(
+                    context.run_modes[0].course_url);
+                expect(view.$('.course-details .course-text .course-key').html()).toEqual(context.key);
+                expect(view.$('.course-details .course-text .run-period').html())
+                    .toEqual(context.run_modes[0].start_date + ' - ' + context.run_modes[0].end_date);
             };
 
             beforeEach(function() {
@@ -58,13 +69,7 @@ define([
             it('should render the course card based on the data enrolled', function() {
                 view.remove();
                 setupView(true);
-                expect(view.$('.header-img').attr('src')).toEqual(context.run_modes[0].course_image_url);
-                expect(view.$('.course-details .course-title-link').text().trim()).toEqual(context.display_name);
-                expect(view.$('.course-details .course-title-link').attr('href')).toEqual(
-                    context.run_modes[0].course_url);
-                expect(view.$('.course-details .course-text .course-key').html()).toEqual(context.key);
-                expect(view.$('.course-details .course-text .run-period').html())
-                    .toEqual(context.run_modes[0].start_date + ' - ' + context.run_modes[0].end_date);
+                validateEnrolledCard();
             });
 
             it('should render the course card based on the data not enrolled', function() {
@@ -74,6 +79,13 @@ define([
                     context.run_modes[0].course_url);
                 expect(view.$('.course-details .course-text .course-key').html()).toEqual(context.key);
                 expect(view.$('.course-details .course-text .run-period').html()).not.toBeDefined();
+            });
+
+            it('should update render if the course card is_enrolled updated', function(){
+                courseCardModel.set({
+                    is_enrolled: true
+                });
+                validateEnrolledCard();
             });
         });
     }
