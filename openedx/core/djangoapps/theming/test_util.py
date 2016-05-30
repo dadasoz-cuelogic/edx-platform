@@ -30,10 +30,13 @@ def with_comprehensive_theme(theme_dir_name):
             # make a domain name out of directory name
             domain = "{theme_dir_name}.org".format(theme_dir_name=re.sub(r"\.org$", "", theme_dir_name))
             site, __ = Site.objects.get_or_create(domain=domain, name=domain)
-            SiteTheme.objects.get_or_create(site=site, theme_dir_name=theme_dir_name)
-            edxmako.paths.add_lookup('main', settings.COMPREHENSIVE_THEME_DIR, prepend=True)
-            with patch('openedx.core.djangoapps.theming.helpers.get_current_site_theme_dir',
-                       return_value=theme_dir_name):
+            site_theme, __ = SiteTheme.objects.get_or_create(site=site, theme_dir_name=theme_dir_name)
+
+            for _dir in settings.COMPREHENSIVE_THEME_DIRS:
+                edxmako.paths.add_lookup('main', _dir, prepend=True)
+
+            with patch('openedx.core.djangoapps.theming.helpers.get_current_site_theme',
+                       return_value=site_theme):
                 with patch('openedx.core.djangoapps.theming.helpers.get_current_site', return_value=site):
                     return func(*args, **kwargs)
         return _decorated
@@ -52,10 +55,13 @@ def with_comprehensive_theme_context(theme=None):
     if theme:
         domain = '{theme}.org'.format(theme=re.sub(r"\.org$", "", theme))
         site, __ = Site.objects.get_or_create(domain=domain, name=theme)
-        SiteTheme.objects.get_or_create(site=site, theme_dir_name=theme)
-        edxmako.paths.add_lookup('main', settings.COMPREHENSIVE_THEME_DIR, prepend=True)
-        with patch('openedx.core.djangoapps.theming.helpers.get_current_site_theme_dir',
-                   return_value=theme):
+        site_theme, __ = SiteTheme.objects.get_or_create(site=site, theme_dir_name=theme)
+
+        for _dir in settings.COMPREHENSIVE_THEME_DIRS:
+            edxmako.paths.add_lookup('main', _dir, prepend=True)
+
+        with patch('openedx.core.djangoapps.theming.helpers.get_current_site_theme',
+                   return_value=site_theme):
             with patch('openedx.core.djangoapps.theming.helpers.get_current_site', return_value=site):
                 yield
     else:

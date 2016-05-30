@@ -30,12 +30,11 @@ from util.db import NoOpMigrationModules
 from lms.envs.test import (
     WIKI_ENABLED,
     PLATFORM_NAME,
-    SITE_ID,
-    DEFAULT_SITE_ID,
     SITE_NAME,
     DEFAULT_FILE_STORAGE,
     MEDIA_ROOT,
     MEDIA_URL,
+    COMPREHENSIVE_THEME_DIRS,
 )
 
 # mongo connection settings

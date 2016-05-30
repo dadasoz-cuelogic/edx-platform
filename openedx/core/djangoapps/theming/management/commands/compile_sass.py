@@ -9,7 +9,7 @@ from django.core.management import BaseCommand, CommandError
 from paver.easy import call_task
 
 from pavelib.assets import ALL_SYSTEMS
-from openedx.core.djangoapps.theming.helpers import get_themes, get_base_theme_dir, is_comprehensive_theming_enabled
+from openedx.core.djangoapps.theming.helpers import get_themes, get_theme_base_dirs, is_comprehensive_theming_enabled
 
 
 class Command(BaseCommand):
@@ -33,6 +33,15 @@ class Command(BaseCommand):
 
         # Named (optional) arguments
         parser.add_argument(
+            '--theme-dirs',
+            dest='theme_dirs',
+            type=str,
+            nargs='+',
+            default=None,
+            help="List of dirs where given themes would be looked.",
+        )
+
+        parser.add_argument(
             '--themes',
             type=str,
             nargs='+',
@@ -41,14 +50,6 @@ class Command(BaseCommand):
         )
 
         # Named (optional) arguments
-        parser.add_argument(
-            '--themes-dir',
-            type=str,
-            dest="themes_dir",
-            default=get_base_theme_dir(),
-            help="base directory where themes are placed",
-        )
-
         parser.add_argument(
             '--force',
             action='store_true',
@@ -73,20 +74,25 @@ class Command(BaseCommand):
         Returns:
             A tuple containing parsed values for themes, system, source comments and output style.
             1. system (list): list of system names for whom to compile theme sass e.g. 'lms', 'cms'
-            2. themes_sir (list): list of Theme objects
+            2. theme_dirs (list): list of Theme objects
             3. themes (list): list of Theme objects
             4. force (bool): Force full compilation
             5. debug (bool): Disable Sass compression
         """
         system = options.get("system", ALL_SYSTEMS)
-
-        themes_dir = options.get("themes_dir", get_base_theme_dir())
         given_themes = options.get("themes", ["all"])
+        theme_dirs = options.get("theme_dirs", None)
 
         force = options.get("force", True)
         debug = options.get("debug", True)
 
-        available_themes = {t.theme_dir: t for t in get_themes(themes_dir)}
+        if theme_dirs:
+            available_themes = {}
+            for theme_dir in theme_dirs:
+                available_themes.update({t.theme_dir_name: t for t in get_themes(theme_dir)})
+        else:
+            theme_dirs = get_theme_base_dirs()
+            available_themes = {t.theme_dir_name: t for t in get_themes()}
 
         if 'no' in given_themes or 'all' in given_themes:
             # Raise error if 'all' or 'no' is present and theme names are also given.
@@ -96,30 +102,38 @@ class Command(BaseCommand):
         # (theme name would be invalid if it does not exist in themes directory)
         elif (not set(given_themes).issubset(available_themes.keys())) and is_comprehensive_theming_enabled():
             raise CommandError(
-                "Given themes '{invalid_themes}' do not exist inside themes directory '{themes_dir}'".format(
-                    invalid_themes=", ".join(set(given_themes) - set(available_themes.keys())),
-                    themes_dir=themes_dir,
+                "Given themes '{themes}' do not exist inside any of the theme directories '{theme_dirs}'".format(
+                    themes=", ".join(set(given_themes) - set(available_themes.keys())),
+                    theme_dirs=theme_dirs,
                 ),
             )
 
         if "all" in given_themes:
-            themes = get_themes()
+            themes = list(available_themes.itervalues())
         elif "no" in given_themes:
             themes = []
         else:
-            # convert theme names to Theme objects
-            themes = [available_themes.get(theme) for theme in given_themes]
+            # convert theme names to Theme objects, this will remove all themes if theming is disabled
+            themes = [available_themes.get(theme) for theme in given_themes if theme in available_themes]
 
-        return system, themes_dir, themes, force, debug
+        return system, theme_dirs, themes, force, debug
 
     def handle(self, *args, **options):
         """
         Handle compile_sass command.
         """
-        system, themes_dir, themes, force, debug = self.parse_arguments(*args, **options)
-        themes = [theme.theme_dir for theme in themes]
+        system, theme_dirs, themes, force, debug = self.parse_arguments(*args, **options)
+        themes = [theme.theme_dir_name for theme in themes]
+
+        if options.get("themes", None) and not is_comprehensive_theming_enabled():
+            # log a warning message to let the user know that asset compilation for themes is skipped
+            self.stdout.write(
+                self.style.WARNING(  # pylint: disable=no-member
+                    "Skipping theme asset compilation: enable theming to process themed assets"
+                ),
+            )
 
         call_task(
             'pavelib.assets.compile_sass',
-            options={'system': system, 'themes_dir': themes_dir, 'themes': themes, 'force': force, 'debug': debug},
+            options={'system': system, 'theme-dirs': theme_dirs, 'themes': themes, 'force': force, 'debug': debug},
         )

@@ -425,9 +425,6 @@ openid.oidutil.log = lambda message, level=0: None
 PLATFORM_NAME = "edX"
 SITE_NAME = "edx.org"
 
-# use default site for tests
-SITE_ID = 1
-
 # set up some testing for microsites
 FEATURES['USE_MICROSITES'] = True
 MICROSITE_ROOT_DIR = COMMON_ROOT / 'test' / 'test_microsites'
@@ -590,3 +587,6 @@ TransformerRegistry.USE_PLUGIN_MANAGER = False
 # Set the default Oauth2 Provider Model so that migrations can run in
 # verbose mode
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+
+
+COMPREHENSIVE_THEME_DIRS = [REPO_ROOT / "themes", REPO_ROOT / "common/test"]

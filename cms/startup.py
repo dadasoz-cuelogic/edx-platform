@@ -18,7 +18,7 @@ from openedx.core.lib.xblock_utils import xblock_local_resource_url
 import xmodule.x_module
 import cms.lib.xblock.runtime
 
-from openedx.core.djangoapps.theming.core import enable_comprehensive_theming
+from openedx.core.djangoapps.theming.core import enable_theming
 from openedx.core.djangoapps.theming.helpers import is_comprehensive_theming_enabled
 
 
@@ -32,7 +32,7 @@ def run():
     # Comprehensive theming needs to be set up before django startup,
     # because modifying django template paths after startup has no effect.
     if is_comprehensive_theming_enabled():
-        enable_comprehensive_theming(settings.COMPREHENSIVE_THEME_DIR)
+        enable_theming()
 
     django.setup()
 

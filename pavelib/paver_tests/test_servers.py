@@ -23,10 +23,10 @@ EXPECTED_CMS_SASS_DIRECTORIES = [
     u"cms/static/sass",
 ]
 EXPECTED_LMS_SASS_COMMAND = [
-    u"python manage.py lms --settings={asset_settings} compile_sass lms  > /dev/null",
+    u"python manage.py lms --settings={asset_settings} compile_sass lms ",
 ]
 EXPECTED_CMS_SASS_COMMAND = [
-    u"python manage.py cms --settings={asset_settings} compile_sass cms  > /dev/null",
+    u"python manage.py cms --settings={asset_settings} compile_sass cms ",
 ]
 EXPECTED_PREPROCESS_ASSETS_COMMAND = (
     u"python manage.py {system} --settings={asset_settings} preprocess_assets"

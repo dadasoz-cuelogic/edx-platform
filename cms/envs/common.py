@@ -47,7 +47,7 @@ import lms.envs.common
 from lms.envs.common import (
     USE_TZ, TECH_SUPPORT_EMAIL, PLATFORM_NAME, BUGS_EMAIL, DOC_STORE_CONFIG, DATA_DIR, ALL_LANGUAGES, WIKI_ENABLED,
     update_module_store_settings, ASSET_IGNORE_REGEX, COPYRIGHT_YEAR,
-    PARENTAL_CONSENT_AGE_LIMIT, COMPREHENSIVE_THEME_DIR, REGISTRATION_EMAIL_PATTERNS_ALLOWED,
+    PARENTAL_CONSENT_AGE_LIMIT, COMPREHENSIVE_THEME_DIRS, REGISTRATION_EMAIL_PATTERNS_ALLOWED,
     # The following PROFILE_IMAGE_* settings are included as they are
     # indirectly accessed through the email opt-in API, which is
     # technically accessible through the CMS via legacy URLs.
@@ -63,14 +63,18 @@ from lms.envs.common import (
 
     STATICI18N_OUTPUT_DIR,
 
-    # Dafault site id to use in case there is no site that matches with the request headers.
-    DEFAULT_SITE_ID,
-
-    # Cache time out settings for comprehensive theming system
-    THEME_CACHE_TIMEOUT,
-
     # Theme to use when no site or site theme is defined,
     DEFAULT_SITE_THEME,
+
+    # Default site to use if no site exists matching request headers
+    SITE_ID,
+
+    # Enable or disable theming
+    ENABLE_COMPREHENSIVE_THEMING,
+
+    # constants for redirects app
+    REDIRECT_CACHE_TIMEOUT,
+    REDIRECT_CACHE_KEY_PREFIX,
 )
 from path import Path as path
 from warnings import simplefilter
@@ -327,6 +331,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.cache.UpdateCacheMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.contrib.sites.middleware.CurrentSiteMiddleware',
 
     # Instead of SessionMiddleware, we use a more secure version
     # 'django.contrib.sessions.middleware.SessionMiddleware',
@@ -359,14 +364,13 @@ MIDDLEWARE_CLASSES = (
 
     'codejail.django_integration.ConfigureCodeJailMiddleware',
 
-    # django current site middleware with default site
-    'django_sites_extensions.middleware.CurrentSiteWithDefaultMiddleware',
-
     # catches any uncaught RateLimitExceptions and returns a 403 instead of a 500
     'ratelimitbackend.middleware.RateLimitMiddleware',
 
     # for expiring inactive sessions
     'session_inactivity_timeout.middleware.SessionInactivityTimeout',
+
+    'openedx.core.djangoapps.theming.middleware.CurrentSiteThemeMiddleware',
 
     # use Django built in clickjacking protection
     'django.middleware.clickjacking.XFrameOptionsMiddleware',

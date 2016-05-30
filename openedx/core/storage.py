@@ -7,17 +7,16 @@ from pipeline.storage import NonPackagingMixin
 from require.storage import OptimizedFilesMixin
 from openedx.core.djangoapps.theming.storage import (
     ThemeStorage,
-    ComprehensiveThemingCachedFilesMixin,
+    ThemeCachedFilesMixin,
     ThemePipelineMixin
 )
 
 
 class ProductionStorage(
-        # TODO: Investigate the effect of this on theming
         PipelineForgivingStorage,
         OptimizedFilesMixin,
         ThemePipelineMixin,
-        ComprehensiveThemingCachedFilesMixin,
+        ThemeCachedFilesMixin,
         ThemeStorage,
         StaticFilesStorage
 ):

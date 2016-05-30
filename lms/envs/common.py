@@ -486,7 +486,7 @@ TEMPLATES = [
             'loaders': [
                 # We have to use mako-aware template loaders to be able to include
                 # mako templates inside django templates (such as main_django.html).
-                'openedx.core.djangoapps.theming.template_loaders.ThemeFilesystemLoader',
+                'openedx.core.djangoapps.theming.template_loaders.ThemeTemplateLoader',
                 'edxmako.makoloader.MakoFilesystemLoader',
                 'edxmako.makoloader.MakoAppDirectoriesLoader',
             ],
@@ -1151,9 +1151,6 @@ MIDDLEWARE_CLASSES = (
     # catches any uncaught RateLimitExceptions and returns a 403 instead of a 500
     'ratelimitbackend.middleware.RateLimitMiddleware',
 
-    # django current site middleware with default site
-    'django_sites_extensions.middleware.CurrentSiteWithDefaultMiddleware',
-
     # for expiring inactive sessions
     'session_inactivity_timeout.middleware.SessionInactivityTimeout',
 
@@ -1164,6 +1161,8 @@ MIDDLEWARE_CLASSES = (
     'courseware.middleware.RedirectUnenrolledMiddleware',
 
     'course_wiki.middleware.WikiAccessMiddleware',
+
+    'openedx.core.djangoapps.theming.middleware.CurrentSiteThemeMiddleware',
 
     # This must be last
     'microsite_configuration.middleware.MicrositeSessionCookieDomainMiddleware',
@@ -2911,21 +2910,20 @@ CREDENTIALS_GENERATION_ROUTING_KEY = HIGH_PRIORITY_QUEUE
 
 WIKI_REQUEST_CACHE_MIDDLEWARE_CLASS = "request_cache.middleware.RequestCache"
 
-# Dafault site id to use in case there is no site that matches with the request headers.
-DEFAULT_SITE_ID = 1
-
 # Settings for Comprehensive Theming app
 
-# Cache time out settings
-# by Comprehensive Theme system
-THEME_CACHE_TIMEOUT = 30 * 60
+# See https://github.com/edx/edx-django-sites-extensions for more info
+# Default site to use if site matching request headers does not exist
+SITE_ID = 1
 
 # dir containing all themes
-COMPREHENSIVE_THEME_DIR = REPO_ROOT / "themes"
+COMPREHENSIVE_THEME_DIRS = [REPO_ROOT / "themes"]
 
 # Theme to use when no site or site theme is defined,
 # set to None if you want to use openedx theme
 DEFAULT_SITE_THEME = None
+
+ENABLE_COMPREHENSIVE_THEMING = True
 
 # API access management
 API_ACCESS_MANAGER_EMAIL = 'api-access@example.com'

@@ -37,7 +37,7 @@ class TestComprehensiveThemeLMS(TestCase):
 
         super(TestComprehensiveThemeLMS, cls).setUpClass()
 
-    @override_settings(COMPREHENSIVE_THEME_DIR=settings.TEST_THEME.dirname())
+    @override_settings(COMPREHENSIVE_THEME_DIRS=[settings.TEST_THEME.dirname()])
     @with_comprehensive_theme(settings.TEST_THEME.basename())
     def test_footer(self):
         """
@@ -48,7 +48,7 @@ class TestComprehensiveThemeLMS(TestCase):
         # This string comes from header.html of test-theme
         self.assertContains(resp, "This is a footer for test-theme.")
 
-    @override_settings(COMPREHENSIVE_THEME_DIR=settings.TEST_THEME.dirname())
+    @override_settings(COMPREHENSIVE_THEME_DIRS=[settings.TEST_THEME.dirname()])
     @with_comprehensive_theme(settings.TEST_THEME.basename())
     def test_logo_image(self):
         """
@@ -57,7 +57,7 @@ class TestComprehensiveThemeLMS(TestCase):
         result = staticfiles.finders.find('test-theme/images/logo.png')
         self.assertEqual(result, settings.TEST_THEME / 'lms/static/images/logo.png')
 
-    @override_settings(COMPREHENSIVE_THEME_DIR=settings.TEST_THEME.dirname())
+    @override_settings(COMPREHENSIVE_THEME_DIRS=[settings.TEST_THEME.dirname()])
     @with_comprehensive_theme(settings.TEST_THEME.basename())
     def test_css_files(self):
         """
@@ -98,7 +98,7 @@ class TestComprehensiveThemeCMS(TestCase):
 
         super(TestComprehensiveThemeCMS, cls).setUpClass()
 
-    @override_settings(COMPREHENSIVE_THEME_DIR=settings.TEST_THEME.dirname())
+    @override_settings(COMPREHENSIVE_THEME_DIRS=[settings.TEST_THEME.dirname()])
     @with_comprehensive_theme(settings.TEST_THEME.basename())
     def test_template_override(self):
         """
@@ -109,7 +109,7 @@ class TestComprehensiveThemeCMS(TestCase):
         # This string comes from login.html of test-theme
         self.assertContains(resp, "Login Page override for test-theme.")
 
-    @override_settings(COMPREHENSIVE_THEME_DIR=settings.TEST_THEME.dirname())
+    @override_settings(COMPREHENSIVE_THEME_DIRS=[settings.TEST_THEME.dirname()])
     @with_comprehensive_theme(settings.TEST_THEME.basename())
     def test_css_files(self):
         """
@@ -229,7 +229,9 @@ def compile_sass(system):
         'pavelib.assets.update_assets',
         args=(
             system,
-            "--themes_dir={}".format(settings.TEST_THEME.dirname()),
+            "--theme-dirs={}".format(settings.TEST_THEME.dirname()),
             "--themes={}".format(settings.TEST_THEME.basename()),
-            "--settings=test"),
+            "--settings=test",
+            "--skip-collect",
+        ),
     )
