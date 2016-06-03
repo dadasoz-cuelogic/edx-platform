@@ -271,12 +271,14 @@ import pytz
              url: "${section_data['sale_validation_url'] | n, js_escaped_string}",
              success: function (data) {
                  $('#error-msg').attr('class','success-msgs')
-                 $('#error-msg').edx.HtmlUtils.setHtml(data.message).show();
+                 edx.HtmlUtils.setHtml($('#error-msg'), data.message);
+                 $('#error-msg').show();
                  $('#invoice_number').val('');
              },
              error: function(jqXHR, textStatus, errorThrown) {
                  $('#error-msg').attr('class','error-msgs')
-                 $('#error-msg').edx.HtmlUtils.setHtml(jqXHR.responseText).show();
+                 edx.HtmlUtils.setHtml($('#error-msg'), jqXHR.responseText);
+                 $('#error-msg').show();
              }
          });
      });
@@ -313,7 +315,8 @@ import pytz
          error: function(jqXHR, textStatus, errorThrown) {
            var data = $.parseJSON(jqXHR.responseText);
            $('#error-msg').attr('class','error-msgs')
-           $('#error-msg').edx.HtmlUtils.setHtml(data.message).show();
+           edx.HtmlUtils.setHtml($('#error-msg'), data.message);
+           $('#error-msg').show();
          }
        });
      });
@@ -338,7 +341,8 @@ import pytz
          error: function(jqXHR, textStatus, errorThrown) {
            var data = $.parseJSON(jqXHR.responseText);
            $('#error-msg').attr('class','error-msgs')
-           $('#error-msg').edx.HtmlUtils.setHtml(data.message).show();
+           edx.HtmlUtils.setHtml($('#error-msg'), data.message);
+           $('#error-msg').show();
            anchor.removeData("disabled");
          }
        });
