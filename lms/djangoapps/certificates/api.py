@@ -21,6 +21,7 @@ from util.organizations_helpers import get_course_organizations
 from certificates.models import (
     CertificateGenerationConfiguration,
     CertificateGenerationCourseSetting,
+    CertificateInvalidation,
     CertificateStatuses,
     CertificateTemplate,
     CertificateTemplateAsset,
@@ -273,6 +274,27 @@ def set_cert_generation_enabled(course_key, is_enabled):
         log.info(u"Disabled self-generated certificates for course '%s'.", unicode(course_key))
 
 
+def is_certificate_invalid(student, course_key):
+    """Check that whether the student in the course has been invalidated
+    for receiving certificates.
+
+    Arguments:
+        student (user object): logged-in user
+        course_key (CourseKey): The course identifier.
+
+    Returns:
+        Boolean denoting whether the student in the course is invalidated
+        to receive certificates
+    """
+    is_invalid = False
+    certificate = GeneratedCertificate.certificate_for_student(student, course_key)
+    if certificate and certificate.status == CertificateStatuses.unavailable:
+        # in case of status 'un-available', check that if this certificate is invalidated
+        is_invalid = CertificateInvalidation.is_certificate_invalid(student, course_key)
+
+    return is_invalid
+
+
 def cert_generation_enabled(course_key):
     """Check whether certificate generation is enabled for a course.
 
@@ -288,15 +310,20 @@ def cert_generation_enabled(course_key):
     Arguments:
         course_key (CourseKey): The course identifier.
 
+    Keyword Arguments:
+        student (user object): logged-in user
+
     Returns:
         boolean: Whether self-generated certificates are enabled
             for the course.
 
     """
+
     return (
         CertificateGenerationConfiguration.current().enabled and
         CertificateGenerationCourseSetting.is_enabled_for_course(course_key)
     )
+
 
 
 def generate_example_certificates(course_key):
