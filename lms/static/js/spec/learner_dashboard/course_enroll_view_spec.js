@@ -20,7 +20,7 @@ define([
                     course_url: 'http://localhost:8000/courses/course-v1:edX+DemoX+Demo_Course/info',
                     course_image_url: 'http://test.com/image1',
                     marketing_url: 'http://test.com/image2',
-                    mode_slug: 'verified',
+                    mode_slug: 'audit',
                     run_key: '2T2016',
                     is_enrolled: false
                 }],
@@ -62,7 +62,7 @@ define([
                     courseId: courseCardModel.get('course_key')
                 });
                 view = new CourseEnrollView({
-                    $el: $('.course-actions'),
+                    $parentEl: $('.course-actions'),
                     model: courseCardModel,
                     enrollModel: courseEnrollModel
                 });
@@ -116,37 +116,53 @@ define([
                 expect(view.$('.run-select').val()).toEqual(multiRunModeList[1].run_key);
                 expect(courseCardModel.updateRun)
                     .toHaveBeenCalledWith(multiRunModeList[1].run_key);
-                expect(courseCardModel.getActiveRunMode()).toEqual(multiRunModeList[1]);
+                expect(courseCardModel.get('run_key')).toEqual(multiRunModeList[1].run_key);
             });
 
             it('should enroll learner when enroll button clicked', function(){
                 singleRunModeList[0].is_enrolled = false;
                 setupView(singleRunModeList);
                 expect(view.$('.enroll-button').length).toBe(1);
-                spyOn(courseEnrollModel, 'enroll');
+                spyOn(courseEnrollModel, 'save');
                 view.$('.enroll-button').click();
-                expect(courseEnrollModel.enroll)
-                    .toHaveBeenCalledWith(singleRunModeList[0].mode_slug);
+                expect(courseEnrollModel.save).toHaveBeenCalled();
             });
 
             it('should enroll learner into the updated run with button click', function(){
                 setupView(multiRunModeList);
-                spyOn(courseEnrollModel, 'enroll');
+                spyOn(courseEnrollModel, 'save');
                 view.$('.run-select').val(multiRunModeList[1].run_key);
                 view.$('.run-select').trigger("change");
                 view.$('.enroll-button').click();
-                expect(courseEnrollModel.enroll)
-                    .toHaveBeenCalledWith(multiRunModeList[1].mode_slug);
+                expect(courseEnrollModel.save).toHaveBeenCalled();
             });
 
-            it('should update card model when enrolled changed', function(){
+            it('should update is_enrolled when enrollment success for audit track', function(){
                 singleRunModeList[0].is_enrolled = false;
                 setupView(singleRunModeList);
                 expect(view.$('.enroll-button').length).toBe(1);
-                courseEnrollModel.set({
-                    enrolled: true
-                });
+                view.enrollSuccess();
                 expect(courseCardModel.get('is_enrolled')).toBe(true);
+            });
+
+            it('should redirect when enrollment success for verified track', function(){
+                singleRunModeList[0].is_enrolled = false;
+                singleRunModeList[0].mode_slug = 'verified';
+                setupView(singleRunModeList);
+                expect(view.$('.enroll-button').length).toBe(1);
+                spyOn(view, 'redirect');
+                view.enrollSuccess();
+                expect(view.redirect).toHaveBeenCalledWith(view.verificationUrl + courseCardModel.get('course_key') + '/');
+            });
+
+            it('should redirect when enrollment success for no track', function(){
+                singleRunModeList[0].is_enrolled = false;
+                singleRunModeList[0].mode_slug = null;
+                setupView(singleRunModeList);
+                expect(view.$('.enroll-button').length).toBe(1);
+                spyOn(view, 'redirect');
+                view.enrollSuccess();
+                expect(view.redirect).toHaveBeenCalledWith(view.trackSelectionUrl + courseCardModel.get('course_key'));
             });
         });
     }

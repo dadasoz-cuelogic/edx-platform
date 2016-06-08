@@ -26,9 +26,7 @@
                 tpl: HtmlUtils.template(pageTpl),
 
                 initialize: function() {
-                    this.enrollModel = new EnrollModel({}, {
-                        courseId: this.model.get('course_key')
-                    });
+                    this.enrollModel = new EnrollModel();
                     this.render();
                     this.listenTo(this.model, 'change', this.render);
                 },
@@ -40,16 +38,12 @@
                 },
 
                 postRender: function(){
-                    HtmlUtils.setHtml(
-                        this.$('.course-actions'),
-                        HtmlUtils.HTML(
-                            new CourseEnrollView({
-                                model: this.model,
-                                context: this.context,
-                                enrollModel: this.enrollModel
-                            }).$el
-                        )
-                    );
+                    this.enrollView = new CourseEnrollView({
+                        $parentEl: this.$('.course-actions'),
+                        model: this.model,
+                        context: this.context,
+                        enrollModel: this.enrollModel
+                    });
                 }
             });
         }
