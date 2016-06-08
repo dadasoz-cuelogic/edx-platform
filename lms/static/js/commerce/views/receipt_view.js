@@ -68,7 +68,7 @@ var edx = edx || {};
             context.username = this.username;
             context.platformName = this.$el.data('platform-name');
             context.fulfillment_instructions = edx.HtmlUtils.HTML(context.fulfillment_instructions);
-            providerDiv.html(_.template(templateHtml)(context)).removeClass('hidden');
+            edx.HtmlUtils.setHtml(providerDiv, edx.HtmlUtils.template(templateHtml)(context)).removeClass('hidden');
         },
 
         renderError: function () {
