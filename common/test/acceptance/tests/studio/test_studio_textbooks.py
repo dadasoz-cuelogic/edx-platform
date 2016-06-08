@@ -43,9 +43,18 @@ class TextbooksTest(StudioCourseTest):
         And I have uploaded a PDF textbook and save the new textbook information
         Then the "View Live" link contains a link to the textbook in the LMS
         """
-        self.textbook_page.open_add_textbook_form()
-        self.textbook_page.upload_pdf_file('textbook.pdf')
-        self.textbook_page.set_input_field_value('.edit-textbook #textbook-name-input', 'book_1')
-        self.textbook_page.set_input_field_value('.edit-textbook #chapter1-name', 'chap_1')
-        self.textbook_page.click_textbook_submit_button()
+        self.textbook_page.upload_new_textbook()
         self.assertTrue(self.textbook_page.is_view_live_link_worked())
+
+    @attr('a11y')
+    def test_textbook_page_a11y(self):
+        self.textbook_page.upload_new_textbook()
+        self.textbook_page.click_view_live_link()
+        self.textbook_page.a11y_audit.config.set_rules({
+            'ignore': [
+                'color-contrast',
+                'skip-link',
+                'link-href',
+            ],
+        })
+        self.textbook_page.a11y_audit.check_for_accessibility_errors()

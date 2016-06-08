@@ -6,6 +6,7 @@ import requests
 from path import Path as path
 from ..common.utils import click_css
 from .course_page import CoursePage
+from selenium.webdriver.common.action_chains import ActionChains
 
 
 class TextbooksPage(CoursePage):
@@ -59,6 +60,13 @@ class TextbooksPage(CoursePage):
         self.q(css='#edit_textbook_form button[type="submit"]').first.click()
         self.wait_for_element_absence(".wrapper-form", "Add/Edit form closed")
 
+    def click_view_live_link(self):
+        """
+        Click view live link
+        """
+        element = self.q(css='a.view')[0]
+        ActionChains(self.browser).move_to_element(element).click(element).perform()
+
     def is_view_live_link_worked(self):
         """
         Check if the view live button of textbook is working fine.
@@ -70,3 +78,10 @@ class TextbooksPage(CoursePage):
             return False
 
         return response.status_code == 200
+
+    def upload_new_textbook(self):
+        self.open_add_textbook_form()
+        self.upload_pdf_file('textbook.pdf')
+        self.set_input_field_value('.edit-textbook #textbook-name-input', 'book_1')
+        self.set_input_field_value('.edit-textbook #chapter1-name', 'chap_1')
+        self.click_textbook_submit_button()
