@@ -183,7 +183,7 @@ class AccountSettingsPageTest(AccountSettingsTestMixin, WebAppTest):
         ]
 
         if not FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'):
-            del expected_sections_structure[0].fields[6]
+            del expected_sections_structure[0]['fields'][6]
 
         self.assertEqual(self.account_settings_page.sections_structure(), expected_sections_structure)
 

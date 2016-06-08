@@ -27,7 +27,8 @@ define(['backbone', 'jquery', 'underscore', 'common/js/spec_helpers/ajax_helpers
                 }, 'preferred_language': {
                     'options': Helpers.FIELD_OPTIONS
                 }, 'time_zone': {
-                    'options': Helpers.FIELD_OPTIONS
+                    'options': Helpers.FIELD_OPTIONS,
+                    'enabled': false
                 }
             };
 
@@ -146,13 +147,7 @@ define(['backbone', 'jquery', 'underscore', 'common/js/spec_helpers/ajax_helpers
 
                 var sectionsData = accountSettingsView.options.tabSections.aboutTabSections;
 
-                var visible_count = 0;
-                _.each(sectionsData[0].fields, function(field) {
-                    if (!field.hidden)
-                        visible_count++;
-                });
-
-                expect(sectionsData[0].fields.length).toBe(visible_count);
+                expect(sectionsData[0].fields.length).toBe(7);
 
                 var textFields = [sectionsData[0].fields[1], sectionsData[0].fields[2]];
                 for (i = 0; i < textFields.length ; i++) {
