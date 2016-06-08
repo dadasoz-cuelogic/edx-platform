@@ -18,13 +18,12 @@
                 },
 
                 initialize: function( attributes, options ) {
-                    var api = '/api/commerce/v0/baskets/';
+                    this.urlRoot = '/api/commerce/v0/baskets/';
 
                     this.set({
                         course_id: options.courseId,
                     });
 
-                    this.url = api;
                     this.trackSelectionUrl = '/course_modes/choose/';
                     this.dashboardUrl = '/dashboard';
                     this.verificationUrl = '/verify_student/start-flow/';

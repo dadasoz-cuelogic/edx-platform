@@ -40,7 +40,7 @@
                     if (this.enrollModel && this.model.get('course_key')){
                         var filledTemplate = this.tpl(this.model.toJSON());
                         HtmlUtils.setHtml(this.$el, filledTemplate);
-                        this.$('.run-select').val(this.model.getActiveRunMode().run_key);
+                        this.$('.run-select').val(this.model.get('run_key'));
                     }
                 },
 
