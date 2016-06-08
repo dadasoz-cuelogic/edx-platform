@@ -87,7 +87,7 @@
                 },
 
                 renderSuccess: function() {
-                    this.$el.html(_.template(successTpl)({
+                    HtmlUtils.setHtml(this.$el, _.template(successTpl)({
                         course: this.model.get('course'),
                         dashboard_url: this.context.dashboard_url
                     }));
@@ -104,7 +104,7 @@
                         msg = gettext('An error has occurred. Check your Internet connection and try again.');
                     }
 
-                    this.errors = ['<li>' + msg + '</li>'];
+                    this.errors = [HtmlUtils.joinHtml('<li>', msg, '</li>')];
                     this.setErrors();
                     this.element.hide( this.$resetSuccess );
                     this.toggleDisableButton(false);
@@ -131,7 +131,7 @@
 
                     if( !this.model.get('country') ){
                         $countryLabel.addClass('error');
-                        $errorMessageContainer.append("<li>" + msg + "</li>");
+                        HtmlUtils.append($errorMessageContainer, HtmlUtils.joinHtml("<li>", msg, "</li>"));
                         this.toggleDisableButton(true);
                         $submissionContainer.removeClass('hidden');
                     }
