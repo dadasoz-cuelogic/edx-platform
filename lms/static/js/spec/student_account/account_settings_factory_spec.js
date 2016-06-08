@@ -146,7 +146,13 @@ define(['backbone', 'jquery', 'underscore', 'common/js/spec_helpers/ajax_helpers
 
                 var sectionsData = accountSettingsView.options.tabSections.aboutTabSections;
 
-                expect(sectionsData[0].fields.length).toBe(7);
+                var visible_count = 0;
+                _.each(sectionsData[0].fields, function(field) {
+                    if (!field.hidden)
+                        visible_count++;
+                });
+
+                expect(sectionsData[0].fields.length).toBe(visible_count);
 
                 var textFields = [sectionsData[0].fields[1], sectionsData[0].fields[2]];
                 for (i = 0; i < textFields.length ; i++) {

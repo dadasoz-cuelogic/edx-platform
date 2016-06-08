@@ -57,6 +57,7 @@
 
                 this.helpMessage = this.options.helpMessage || '';
                 this.showMessages = _.isUndefined(this.options.showMessages) ? true : this.options.showMessages;
+                this.hidden = _.isUndefined(this.options.hidden) ? false: this.options.hidden;
 
                 _.bindAll(this, 'modelValue', 'modelValueIsSet', 'showNotificationMessage','getNotificationMessage',
                     'getMessage', 'title', 'showHelpMessage', 'showInProgressMessage', 'showSuccessMessage',

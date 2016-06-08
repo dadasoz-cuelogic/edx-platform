@@ -392,7 +392,7 @@ def account_settings_context(request):
                 'options': all_languages(),
             }, 'time_zone': {
                 'options': [(tz, tz) for tz in common_timezones],
-                'visible': FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'),
+                'enabled': FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'),
             }
         },
         'platform_name': get_themed_value('PLATFORM_NAME', settings.PLATFORM_NAME),

@@ -107,6 +107,7 @@
                                 required: true,
                                 title: gettext('Time Zone'),
                                 valueAttribute: 'time_zone',
+                                hidden: !fieldsData.time_zone.enabled,
                                 helpMessage: gettext(
                                     'Select the time zone for displaying course dates. If you do not specify a ' +
                                     'time zone here, course dates, including assignment deadlines, are displayed in ' +
@@ -160,11 +161,6 @@
                     ]
                 }
             ];
-
-            // removes time zone field if feature flag disabled
-            if (!fieldsData.time_zone.visible) {
-                aboutSectionsData[0].fields.splice(6, 1)
-            }
 
             accountsSectionData = [
                 {

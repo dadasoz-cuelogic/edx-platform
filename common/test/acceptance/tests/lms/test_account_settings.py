@@ -14,6 +14,8 @@ from ...pages.lms.dashboard import DashboardPage
 
 from ..helpers import EventsTestMixin
 
+from lms.envs.common import FEATURES
+
 
 class AccountSettingsTestMixin(EventsTestMixin, WebAppTest):
     """
@@ -166,7 +168,7 @@ class AccountSettingsPageTest(AccountSettingsTestMixin, WebAppTest):
                     'Password',
                     'Language',
                     'Country or Region',
-                    'Time Zone'
+                    'Time Zone',
                 ]
             },
             {
@@ -179,6 +181,9 @@ class AccountSettingsPageTest(AccountSettingsTestMixin, WebAppTest):
                 ]
             }
         ]
+
+        if not FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'):
+            del expected_sections_structure[0].fields[6]
 
         self.assertEqual(self.account_settings_page.sections_structure(), expected_sections_structure)
 
