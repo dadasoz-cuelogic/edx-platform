@@ -12,7 +12,7 @@
         ) %>
   </div>
   <div class="provider-instructions">
-    <%= edx.HtmlUtils.ensureHtml(fulfillment_instructions) %>
+    <%- edx.HtmlUtils.ensureHtml(fulfillment_instructions) %>
   </div>
 </div>
 
