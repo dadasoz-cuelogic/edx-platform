@@ -78,7 +78,7 @@
                         HtmlUtils: HtmlUtils
                     });
 
-                    this.$el.html(_.template(this.tpl)(data));
+                    HtmlUtils.setHtml(this.$el, HtmlUtils.template(this.tpl)(data));
 
                     this.postRender();
                     this.validateCountry();
@@ -124,9 +124,7 @@
                             // profile page.
                             gettext('Please go to your {link_start}profile page{link_end} and provide your country of residence.'), // jshint ignore:line
                             {
-                                link_start: HtmlUtils.HTML(
-                                    '<a href="' + this.context.account_settings_url + '">'
-                                ),
+                                link_start: HtmlUtils.joinHtml('<a href="', this.context.account_settings_url, '">'),
                                 link_end: HtmlUtils.HTML('</a>')
                             }
                         );
