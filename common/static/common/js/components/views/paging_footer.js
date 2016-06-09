@@ -42,7 +42,6 @@
                             current_page: this.collection.getPageNumber(),
                             total_pages: this.collection.getTotalPages(),
                             paginationLabel: this.paginationLabel,
-                            interpolateHtml: HtmlUtils.interpolateHtml,
                         })
                     );
                     this.$(".previous-page-link").toggleClass("is-disabled", onFirstPage).attr('aria-disabled', onFirstPage);
