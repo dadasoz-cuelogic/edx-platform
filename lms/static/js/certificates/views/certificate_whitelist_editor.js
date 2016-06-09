@@ -45,12 +45,13 @@
                     }
 
                     var certificate_exception = new CertificateExceptionModel({
-                        url: this.collection.url,
                         user_name: user_name,
                         user_email: user_email,
                         notes: notes,
                         new: true
-                    });
+                    },
+                        {url: this.collection.url},
+                    );
                     var message = "";
 
                     if(this.collection.findWhere(model)){
