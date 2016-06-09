@@ -288,18 +288,36 @@ def get_theme_base_dirs():
     if not is_comprehensive_theming_enabled():
         return []
 
-    theme_dirs = settings.COMPREHENSIVE_THEME_DIRS
+    theme_base_dirs = []
 
-    if not isinstance(theme_dirs, list):
-        raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must be a list.")
-    if not all([isinstance(theme_dir, basestring) for theme_dir in theme_dirs]):
-        raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must contain only strings.")
-    if not all([theme_dir.startswith("/") for theme_dir in theme_dirs]):
-        raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must contain only absolute paths to themes dirs.")
-    if not all([os.path.isdir(theme_dir) for theme_dir in theme_dirs]):
-        raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must contain valid paths.")
+    # Legacy code for COMPREHENSIVE_THEME_DIR backward compatibility
+    if hasattr(settings, "COMPREHENSIVE_THEME_DIR"):
+        theme_dir = settings.COMPREHENSIVE_THEME_DIR
 
-    return [Path(theme_dir) for theme_dir in theme_dirs]
+        if not isinstance(theme_dir, basestring):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIR must be a string.")
+        if not theme_dir.startswith("/"):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIR must be an absolute paths to themes dir.")
+        if not os.path.isdir(theme_dir):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIR must be a valid path.")
+
+        theme_base_dirs.append(Path(theme_dir))
+
+    if hasattr(settings, "COMPREHENSIVE_THEME_DIRS"):
+        theme_dirs = settings.COMPREHENSIVE_THEME_DIRS
+
+        if not isinstance(theme_dirs, list):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must be a list.")
+        if not all([isinstance(theme_dir, basestring) for theme_dir in theme_dirs]):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must contain only strings.")
+        if not all([theme_dir.startswith("/") for theme_dir in theme_dirs]):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must contain only absolute paths to themes dirs.")
+        if not all([os.path.isdir(theme_dir) for theme_dir in theme_dirs]):
+            raise ImproperlyConfigured("COMPREHENSIVE_THEME_DIRS must contain valid paths.")
+
+        theme_base_dirs.extend([Path(theme_dir) for theme_dir in theme_dirs])
+
+    return theme_base_dirs
 
 
 def is_comprehensive_theming_enabled():
