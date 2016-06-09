@@ -514,7 +514,7 @@ class AccountSettingsViewTest(ThirdPartyAuthTestMixin, TestCase):
         """
         temp_features = copy(settings.FEATURES)
         temp_features['ENABLE_TIME_ZONE_PREFERENCE'] = False
-        with self.settings(FEATURES = temp_features):
+        with self.settings(FEATURES=temp_features):
             view_path = reverse('account_settings')
             response = self.client.get(path=view_path)
 
