@@ -226,7 +226,7 @@ class CertificateisInvalid(WebCertificateTestMixin, ModuleStoreTestCase):
             number='verified',
             display_name='Verified Course'
         )
-
+        self.global_staff = GlobalStaffFactory()
         self.request_factory = RequestFactory()
 
     def test_method_with_no_certificate(self):
@@ -246,22 +246,22 @@ class CertificateisInvalid(WebCertificateTestMixin, ModuleStoreTestCase):
         CertificateStatuses.notpassing,
         CertificateStatuses.error,
         CertificateStatuses.unverified,
-        CertificateStatuses.deleted
+        CertificateStatuses.deleted,
+        CertificateStatuses.unavailable,
     )
     def test_method_with_all_statues(self, status):
-        """ Verify query count for 'is_certificate_invalid' for all statues except
-        'un-available'. """
-        self._generate_cert(status)
-        with self.assertNumQueries(1):
-            self.assertFalse(
-                certs_api.is_certificate_invalid(self.student, self.course.id)
-            )
+        """ Verify method return True if certificate has valid status but it is
+        marked as invalid in CertificateInvalidation table. """
 
-    def test_method_with_unavailable_status(self):
-        """ Verify query count for 'is_certificate_invalid' for status 'un-available'. """
-        self._generate_cert(CertificateStatuses.unavailable)
+        certificate = self._generate_cert(status)
+        CertificateInvalidationFactory.create(
+            generated_certificate=certificate,
+            invalidated_by=self.global_staff,
+            active=True
+        )
+        # Also check query count for 'is_certificate_invalid' method.
         with self.assertNumQueries(2):
-            self.assertFalse(
+            self.assertTrue(
                 certs_api.is_certificate_invalid(self.student, self.course.id)
             )
 
@@ -285,10 +285,9 @@ class CertificateisInvalid(WebCertificateTestMixin, ModuleStoreTestCase):
 
     def _invalidate_certificate(self, certificate, active):
         """ Dry method to mark certificate as invalid. """
-        global_staff = GlobalStaffFactory()
         CertificateInvalidationFactory.create(
             generated_certificate=certificate,
-            invalidated_by=global_staff,
+            invalidated_by=self.global_staff,
             active=active
         )
         # Invalidate user certificate

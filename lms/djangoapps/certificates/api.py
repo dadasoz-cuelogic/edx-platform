@@ -288,8 +288,7 @@ def is_certificate_invalid(student, course_key):
     """
     is_invalid = False
     certificate = GeneratedCertificate.certificate_for_student(student, course_key)
-    if certificate and certificate.status == CertificateStatuses.unavailable:
-        # in case of status 'un-available', check that if this certificate is invalidated
+    if certificate:
         is_invalid = CertificateInvalidation.has_certificate_invalidation(student, course_key)
 
     return is_invalid
