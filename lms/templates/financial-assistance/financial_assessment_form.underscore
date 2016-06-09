@@ -39,7 +39,7 @@
 	<%= HtmlUtils.HTML(fieldsHtml) %>
 
 	<div class="cta-wrapper clearfix">
-		<a href="<%- student_faq_url %>" class="nav-link"><%- edx.HtmlUtils.interpolateHtml(
+		<a href="<%- student_faq_url %>" class="nav-link"><%- HtmlUtils.interpolateHtml(
 		  gettext('Back to {platform} FAQs'),
     		  {platform: platform_name}
     	) %></a>

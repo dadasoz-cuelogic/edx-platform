@@ -87,7 +87,7 @@
                 },
 
                 renderSuccess: function() {
-                    HtmlUtils.setHtml(this.$el, _.template(successTpl)({
+                    HtmlUtils.setHtml(this.$el, HtmlUtils.template(successTpl)({
                         course: this.model.get('course'),
                         dashboard_url: this.context.dashboard_url
                     }));
@@ -131,7 +131,11 @@
 
                     if( !this.model.get('country') ){
                         $countryLabel.addClass('error');
-                        HtmlUtils.append($errorMessageContainer, HtmlUtils.joinHtml("<li>", msg, "</li>"));
+                        HtmlUtils.append($errorMessageContainer, HtmlUtils.joinHtml(
+                            HtmlUtils.HTML("<li>"),
+                            msg,
+                            HtmlUtils.HTML("</li>")
+                        ));
                         this.toggleDisableButton(true);
                         $submissionContainer.removeClass('hidden');
                     }
