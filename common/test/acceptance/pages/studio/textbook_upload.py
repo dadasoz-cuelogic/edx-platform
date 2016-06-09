@@ -9,7 +9,7 @@ from .course_page import CoursePage
 from selenium.webdriver.common.action_chains import ActionChains
 
 
-class TextbooksPage(CoursePage):
+class TextbookUploadPage(CoursePage):
     """
     Course Textbooks page.
     """
@@ -80,6 +80,9 @@ class TextbooksPage(CoursePage):
         return response.status_code == 200
 
     def upload_new_textbook(self):
+        """
+        Fills out form to upload a new textbook
+        """
         self.open_add_textbook_form()
         self.upload_pdf_file('textbook.pdf')
         self.set_input_field_value('.edit-textbook #textbook-name-input', 'book_1')
