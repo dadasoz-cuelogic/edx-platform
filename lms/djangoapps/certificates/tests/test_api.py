@@ -10,20 +10,6 @@ from mock import patch
 from nose.plugins.attrib import attr
 from opaque_keys.edx.locator import CourseLocator
 
-from certificates import api as certs_api
-from certificates.models import (
-    CertificateStatuses,
-    CertificateGenerationConfiguration,
-    CertificateInvalidation,
-    ExampleCertificate,
-    GeneratedCertificate,
-    certificate_status_for_student,
-)
-from certificates.queue import XQueueCertInterface, XQueueAddToQueueError
-from certificates.tests.factories import (
-    CertificateInvalidationFactory,
-    GeneratedCertificateFactory
-)
 from config_models.models import cache
 from course_modes.models import CourseMode
 from course_modes.tests.factories import CourseModeFactory
@@ -36,6 +22,20 @@ from xmodule.modulestore.tests.factories import CourseFactory
 from xmodule.modulestore.tests.django_utils import (
     ModuleStoreTestCase,
     SharedModuleStoreTestCase,
+)
+
+from certificates import api as certs_api
+from certificates.models import (
+    CertificateStatuses,
+    CertificateGenerationConfiguration,
+    ExampleCertificate,
+    GeneratedCertificate,
+    certificate_status_for_student,
+)
+from certificates.queue import XQueueCertInterface, XQueueAddToQueueError
+from certificates.tests.factories import (
+    CertificateInvalidationFactory,
+    GeneratedCertificateFactory
 )
 
 

@@ -754,7 +754,7 @@ def _progress(request, course_key, student_id):
         'passed': is_course_passed(course, grade_summary),
         'show_generate_cert_btn': show_generate_cert_btn,
         'credit_course_requirements': _credit_course_requirements(course_key, student),
-        'missing_required_verification': missing_required_verification
+        'missing_required_verification': missing_required_verification,
         'is_invalid': is_invalid,
     }
 
