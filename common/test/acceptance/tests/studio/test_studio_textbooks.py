@@ -50,16 +50,37 @@ class TextbooksTest(StudioCourseTest):
     @attr('a11y')
     def test_textbook_page_a11y(self):
         """
-        Uploads a new textbook, and runs an accessibility test on the pdf viewer in lms
+        Uploads a new textbook
+        Runs an accessibility test on the textbook page in lms
         """
         self.textbook_upload_page.upload_new_textbook()
         self.textbook_view_page = TextbookViewPage(self.browser, self.course_id)
         self.textbook_view_page.visit()
+
+        self.textbook_view_page.a11y_audit.config.set_rules({
+            'ignore': [
+                'color-contrast',
+            ],
+        })
+        self.textbook_view_page.a11y_audit.check_for_accessibility_errors()
+
+    @attr('a11y')
+    def test_pdf_viewer_a11y(self):
+        """
+        Uploads a new textbook
+        Runs an accessibility test on the pdf viewer frame in lms
+        """
+        self.textbook_upload_page.upload_new_textbook()
+        self.textbook_view_page = TextbookViewPage(self.browser, self.course_id)
+        self.textbook_view_page.visit()
+
         self.textbook_view_page.switch_to_pdf_frame(self)
         self.textbook_view_page.a11y_audit.config.set_rules({
             'ignore': [
                 'html-lang',
                 'meta-viewport',
+                'skip-link',
+                'link-href',
             ],
         })
         self.textbook_view_page.a11y_audit.check_for_accessibility_errors()

@@ -60,13 +60,6 @@ class TextbookUploadPage(CoursePage):
         self.q(css='#edit_textbook_form button[type="submit"]').first.click()
         self.wait_for_element_absence(".wrapper-form", "Add/Edit form closed")
 
-    def click_view_live_link(self):
-        """
-        Click view live link
-        """
-        element = self.q(css='a.view')[0]
-        ActionChains(self.browser).move_to_element(element).click(element).perform()
-
     def is_view_live_link_worked(self):
         """
         Check if the view live button of textbook is working fine.
