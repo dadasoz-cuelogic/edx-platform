@@ -27,10 +27,13 @@
                 initialize: function(options) {
                     this.$parentEl = options.$parentEl;
                     this.enrollModel = options.enrollModel;
+                    this.urlModel = options.urlModel;
                     this.render();
-                    this.trackSelectionUrl = '/course_modes/choose/';
-                    this.dashboardUrl = '/dashboard';
-                    this.verificationUrl = '/verify_student/start-flow/';
+                    if(this.urlModel){
+                        this.trackSelectionUrl = this.urlModel.get('track_selection_url');
+                        this.dashboardUrl = this.urlModel.get('dashboard_url');
+                        this.verificationUrl = this.urlModel.get('id_verification_url');
+                    }
                 },
 
                 updateIsEnrolled: function(){
@@ -77,18 +80,21 @@
                     var track = this.model.get('mode_slug'),
                         courseKey = this.model.get('course_key');
                     if (track) {
-                        if ( track === 'honor' || track === 'audit' ) {
-                            this.model.set({
-                                is_enrolled: true
-                            });
-                        } else  {
+                        if ( track !== 'honor' &&
+                            track !== 'audit' &&
+                            this.verificationUrl ) {
+                            
                             // Go to the start of the verification flow
                             this.redirect( this.verificationUrl + courseKey + '/' );
                         }
-                    } else {
+                    } else if (this.trackSelectionUrl) {
                         // Go to track selection page
                         this.redirect( this.trackSelectionUrl + courseKey );
                     }
+
+                    this.model.set({
+                        is_enrolled: true
+                    });
                 },
 
                 enrollError: function(model, response) {
@@ -101,7 +107,7 @@
                          * why they were blocked.
                          */
                         this.redirect( response.responseJSON.user_message_url );
-                    } else {
+                    } else if (this.trackSelectionUrl){
                         /**
                          * Otherwise, go to the track selection page as usual.
                          * This can occur, for example, when a course does not

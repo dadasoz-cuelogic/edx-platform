@@ -7,8 +7,8 @@
     <div class="enrollment-info"><%- gettext('not enrolled') %></div>
     <% if (run_modes.length > 1){ %>
         <div class="run-select-container">
-            <label class="sr-only">Select Course Run</label>
-            <select class="run-select">
+            <label class="sr-only" for="select-<%- course_key %>-run">Select Course Run</label>
+            <select id="select-<%- course_key %>-run" class="run-select">
                 <% _.each (run_modes, function(runMode){ %>
                     <option value="<%- runMode.run_key %>">
                         <%= interpolate(

@@ -5,11 +5,9 @@
     'use strict';
 
     define([
-            'backbone',
-            'jquery',
-            'underscore'
+            'backbone'
         ],
-        function( Backbone, $, _ ) {
+        function( Backbone) {
             return Backbone.Model.extend({
                 defaults: {
                     course_id: '',

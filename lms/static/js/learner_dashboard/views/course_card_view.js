@@ -25,8 +25,11 @@
 
                 tpl: HtmlUtils.template(pageTpl),
 
-                initialize: function() {
+                initialize: function(options) {
                     this.enrollModel = new EnrollModel();
+                    if(options.context && options.context.urls){
+                        this.urlModel = new Backbone.Model(options.context.urls);
+                    }
                     this.render();
                     this.listenTo(this.model, 'change', this.render);
                 },
@@ -41,7 +44,7 @@
                     this.enrollView = new CourseEnrollView({
                         $parentEl: this.$('.course-actions'),
                         model: this.model,
-                        context: this.context,
+                        urlModel: this.urlModel,
                         enrollModel: this.enrollModel
                     });
                 }

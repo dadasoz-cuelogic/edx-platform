@@ -12,6 +12,7 @@ define([
             var view = null,
                 courseCardModel,
                 courseEnrollModel,
+                urlModel,
                 setupView,
                 singleRunModeList = [{
                     start_date: 'Apr 25, 2016',
@@ -52,24 +53,36 @@ define([
                         display_name: 'edx.org',
                         key: 'edX'
                     },
+                },
+                urls = {
+                    dashboard_url: '/dashboard',
+                    id_verification_url: '/verify_student/start_flow/',
+                    track_selection_url: '/select_track/course/'
                 };
 
-            setupView = function(runModes){
+            setupView = function(runModes, urls){
                 context.run_modes = runModes;
                 setFixtures('<div class="course-actions"></div>');
                 courseCardModel = new CourseCardModel(context);
                 courseEnrollModel = new CourseEnrollModel({}, {
                     courseId: courseCardModel.get('course_key')
                 });
+                if(urls){
+                    urlModel = new Backbone.Model(urls);
+                }
                 view = new CourseEnrollView({
                     $parentEl: $('.course-actions'),
                     model: courseCardModel,
-                    enrollModel: courseEnrollModel
+                    enrollModel: courseEnrollModel,
+                    urlModel: urlModel
                 });
             };
 
             afterEach(function() {
                 view.remove();
+                urlModel = null;
+                courseCardModel = null;
+                courseEnrollModel = null;
             });
 
             it('should exist', function() {
@@ -148,21 +161,63 @@ define([
             it('should redirect when enrollment success for verified track', function(){
                 singleRunModeList[0].is_enrolled = false;
                 singleRunModeList[0].mode_slug = 'verified';
-                setupView(singleRunModeList);
+                setupView(singleRunModeList, urls);
+                expect(view.verificationUrl).toBeDefined();
                 expect(view.$('.enroll-button').length).toBe(1);
                 spyOn(view, 'redirect');
                 view.enrollSuccess();
-                expect(view.redirect).toHaveBeenCalledWith(view.verificationUrl + courseCardModel.get('course_key') + '/');
+                expect(view.redirect).toHaveBeenCalledWith(
+                    view.verificationUrl + courseCardModel.get('course_key') + '/');
             });
 
             it('should redirect when enrollment success for no track', function(){
                 singleRunModeList[0].is_enrolled = false;
                 singleRunModeList[0].mode_slug = null;
-                setupView(singleRunModeList);
+                setupView(singleRunModeList, urls);
                 expect(view.$('.enroll-button').length).toBe(1);
+                expect(view.trackSelectionUrl).toBeDefined();
                 spyOn(view, 'redirect');
                 view.enrollSuccess();
-                expect(view.redirect).toHaveBeenCalledWith(view.trackSelectionUrl + courseCardModel.get('course_key'));
+                expect(view.redirect).toHaveBeenCalledWith(
+                    view.trackSelectionUrl + courseCardModel.get('course_key'));
+            });
+
+            it('should not redirect when urls not provided', function(){
+                singleRunModeList[0].is_enrolled = false;
+                singleRunModeList[0].mode_slug = 'verified';
+                setupView(singleRunModeList);
+                expect(view.$('.enroll-button').length).toBe(1);
+                expect(view.verificationUrl).not.toBeDefined();
+                expect(view.dashboardUrl).not.toBeDefined();
+                expect(view.trackSelectionUrl).not.toBeDefined();
+                spyOn(view, 'redirect');
+                view.enrollSuccess();
+                expect(view.redirect).not.toHaveBeenCalled();
+            });
+
+            it('should redirect to track selection on error', function(){
+                setupView(singleRunModeList, urls);
+                expect(view.$('.enroll-button').length).toBe(1);
+                expect(view.trackSelectionUrl).toBeDefined();
+                spyOn(view, 'redirect');
+                view.enrollError(courseEnrollModel, {status: 500});
+                expect(view.redirect).toHaveBeenCalledWith(
+                    view.trackSelectionUrl + courseCardModel.get('course_key'));
+            });
+
+            it('should redirect to login on 403 error', function(){
+                var response = {
+                    status: 403,
+                    responseJSON:{
+                        user_message_url: 'test_url/haha'
+                    }}
+                setupView(singleRunModeList, urls);
+                expect(view.$('.enroll-button').length).toBe(1);
+                expect(view.trackSelectionUrl).toBeDefined();
+                spyOn(view, 'redirect');
+                view.enrollError(courseEnrollModel, response);
+                expect(view.redirect).toHaveBeenCalledWith(
+                    response.responseJSON.user_message_url);
             });
         });
     }
