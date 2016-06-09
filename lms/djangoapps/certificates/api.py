@@ -310,20 +310,15 @@ def cert_generation_enabled(course_key):
     Arguments:
         course_key (CourseKey): The course identifier.
 
-    Keyword Arguments:
-        student (user object): logged-in user
-
     Returns:
         boolean: Whether self-generated certificates are enabled
             for the course.
 
     """
-
     return (
         CertificateGenerationConfiguration.current().enabled and
         CertificateGenerationCourseSetting.is_enabled_for_course(course_key)
     )
-
 
 
 def generate_example_certificates(course_key):
