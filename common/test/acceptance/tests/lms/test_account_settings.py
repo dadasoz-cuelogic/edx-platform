@@ -14,7 +14,7 @@ from ...pages.lms.dashboard import DashboardPage
 
 from ..helpers import EventsTestMixin
 
-from lms.envs.common import FEATURES
+from django.conf import settings
 
 
 class AccountSettingsTestMixin(EventsTestMixin, WebAppTest):
@@ -182,7 +182,7 @@ class AccountSettingsPageTest(AccountSettingsTestMixin, WebAppTest):
             }
         ]
 
-        if not FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'):
+        if not settings.FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'):
             del expected_sections_structure[0]['fields'][6]
 
         self.assertEqual(self.account_settings_page.sections_structure(), expected_sections_structure)

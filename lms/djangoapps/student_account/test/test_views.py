@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 """ Tests for student account views. """
 
-import re
+import json
 from nose.plugins.attrib import attr
+import re
 from unittest import skipUnless
 from urllib import urlencode
 
@@ -14,7 +15,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core.urlresolvers import reverse
 from django.contrib import messages
 from django.contrib.messages.middleware import MessageMiddleware
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.test.utils import override_settings
 from django.http import HttpRequest
 
@@ -29,6 +30,9 @@ from third_party_auth.tests.testutil import simulate_running_pipeline, ThirdPart
 from util.testing import UrlResetMixin
 from xmodule.modulestore.tests.django_utils import ModuleStoreTestCase
 from openedx.core.djangoapps.theming.test_util import with_edx_domain_context
+
+from django.conf import settings
+from copy import copy
 
 
 @ddt.ddt
@@ -457,6 +461,10 @@ class AccountSettingsViewTest(ThirdPartyAuthTestMixin, TestCase):
         'preferred_language',
     ]
 
+    HIDDEN_FIELDS = [
+        'time_zone',
+    ]
+
     @mock.patch("django.conf.settings.MESSAGE_STORAGE", 'django.contrib.messages.storage.cookie.CookieStorage')
     def setUp(self):
         super(AccountSettingsViewTest, self).setUp()
@@ -500,13 +508,35 @@ class AccountSettingsViewTest(ThirdPartyAuthTestMixin, TestCase):
         self.assertEqual(context['auth']['providers'][0]['name'], 'Facebook')
         self.assertEqual(context['auth']['providers'][1]['name'], 'Google')
 
-    def test_view(self):
+    def test_hidden_fields_not_visible(self):
+        """
+        Test that hidden fields are not visible when disabled.
+        """
+        temp_features = copy(settings.FEATURES)
+        temp_features['ENABLE_TIME_ZONE_PREFERENCE'] = False
+        with self.settings(FEATURES = temp_features):
+            view_path = reverse('account_settings')
+            response = self.client.get(path=view_path)
 
-        view_path = reverse('account_settings')
-        response = self.client.get(path=view_path)
+            for attribute in self.FIELDS:
+                self.assertIn(attribute, response.content)
+            for attribute in self.HIDDEN_FIELDS:
+                self.assertIn('"%s": {"enabled": false' % (attribute), response.content)
 
-        for attribute in self.FIELDS:
-            self.assertIn(attribute, response.content)
+    def test_hidden_fields_are_visible(self):
+        """
+        Test that hidden fields are visible when enabled.
+        """
+        temp_features = copy(settings.FEATURES)
+        temp_features['ENABLE_TIME_ZONE_PREFERENCE'] = True
+        with self.settings(FEATURES=temp_features):
+            view_path = reverse('account_settings')
+            response = self.client.get(path=view_path)
+
+            for attribute in self.FIELDS:
+                self.assertIn(attribute, response.content)
+            for attribute in self.HIDDEN_FIELDS:
+                self.assertIn('"%s": {"enabled": true' % (attribute), response.content)
 
 
 @override_settings(SITE_NAME=settings.MICROSITE_LOGISTRATION_HOSTNAME)

@@ -41,7 +41,7 @@ from openedx.core.djangoapps.user_api.accounts.api import request_password_chang
 from openedx.core.djangoapps.user_api.errors import UserNotFound
 
 from pytz import common_timezones
-from lms.envs.common import FEATURES
+from django.conf import settings
 
 AUDIT_LOG = logging.getLogger("audit")
 
@@ -392,7 +392,7 @@ def account_settings_context(request):
                 'options': all_languages(),
             }, 'time_zone': {
                 'options': [(tz, tz) for tz in common_timezones],
-                'enabled': FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'),
+                'enabled': settings.FEATURES.get('ENABLE_TIME_ZONE_PREFERENCE'),
             }
         },
         'platform_name': get_themed_value('PLATFORM_NAME', settings.PLATFORM_NAME),
