@@ -3,7 +3,6 @@ Specific overrides to the base prod settings to make development easier.
 """
 
 from os.path import abspath, dirname, join
-from os import environ
 
 from .aws import *  # pylint: disable=wildcard-import, unused-wildcard-import
 
@@ -58,53 +57,8 @@ DJFS = {
 
 ################################# CELERY ######################################
 
-
-## efischer celery-on-devstack
-ALTERNATE_QUEUE_ENVS = environ.get('ALTERNATE_SERVICE_VARIANTS', '').split()
-
-# Run celery tasks asynchronously
-CELERY_ALWAYS_EAGER = False
-
-# Copy-paste some celery relevant settings from aws.py
-CELERY_RESULT_BACKEND = 'djcelery.backends.cache:CacheBackend'
-QUEUE_VARIANT = CONFIG_PREFIX.lower()
-CELERY_DEFAULT_EXCHANGE = 'edx.{0}core'.format(QUEUE_VARIANT)
-HIGH_PRIORITY_QUEUE = 'edx.{0}core.high'.format(QUEUE_VARIANT)
-DEFAULT_PRIORITY_QUEUE = 'edx.{0}core.default'.format(QUEUE_VARIANT)
-LOW_PRIORITY_QUEUE = 'edx.{0}core.low'.format(QUEUE_VARIANT)
-HIGH_MEM_QUEUE = 'edx.{0}core.high_mem'.format(QUEUE_VARIANT)
-CELERY_DEFAULT_QUEUE = DEFAULT_PRIORITY_QUEUE
-CELERY_DEFAULT_ROUTING_KEY = DEFAULT_PRIORITY_QUEUE
-CELERY_QUEUES = {
-    HIGH_PRIORITY_QUEUE: {},
-    LOW_PRIORITY_QUEUE: {},
-    DEFAULT_PRIORITY_QUEUE: {},
-    HIGH_MEM_QUEUE: {},
-}
-ALTERNATE_QUEUES = [
-    DEFAULT_PRIORITY_QUEUE.replace(QUEUE_VARIANT, alternate + '.')
-    for alternate in ALTERNATE_QUEUE_ENVS
-]
-CELERY_QUEUES.update(
-    {
-        alternate: {}
-        for alternate in ALTERNATE_QUEUES
-        if alternate not in CELERY_QUEUES.keys()
-    }
-)
-
-# Let `./manage.py lms celery worker --settings=devstack` talk to Rabbit
-BROKER_URL = "amqp://celery:celery@localhost:5672"
-
-# Setup memcached (also copied from aws.py)
-CACHES = ENV_TOKENS['CACHES']
-if 'loc_cache' not in CACHES:
-    CACHES['loc_cache'] = {
-        'BACKEND': 'django.core.cache.backends.memcached.MemcachedCache',
-        'LOCATION': '127.0.0.1:11211',
-        'KEY_FUNCTION': 'util.memcache.safe_key',
-    }
-## end efischer celery-on-devstack
+# By default don't use a worker, execute tasks as if they were local functions
+CELERY_ALWAYS_EAGER = True
 
 ################################ DEBUG TOOLBAR ################################
 INSTALLED_APPS += ('debug_toolbar', 'debug_toolbar_mongo')
