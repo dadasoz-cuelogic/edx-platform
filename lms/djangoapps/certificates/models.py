@@ -437,7 +437,7 @@ class CertificateInvalidation(TimeStampedModel):
         return data
 
     @classmethod
-    def is_certificate_invalid(cls, student, course_key):
+    def has_certificate_invalidation(cls, student, course_key):
         """Check that whether the student in the course has been invalidated
         for receiving certificates.
 

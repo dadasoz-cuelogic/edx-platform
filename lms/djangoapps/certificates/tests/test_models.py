@@ -327,7 +327,7 @@ class CertificateInvalidationTest(SharedModuleStoreTestCase):
         """ Verify that method return false if certificate is valid. """
 
         self.assertFalse(
-            CertificateInvalidation.is_certificate_invalid(self.user, self.course_id)
+            CertificateInvalidation.has_certificate_invalidation(self.user, self.course_id)
         )
 
     def test_is_certificate_invalid_with_invalid_cert(self):
@@ -340,7 +340,7 @@ class CertificateInvalidationTest(SharedModuleStoreTestCase):
         # Invalidate user certificate
         self.certificate.invalidate()
         self.assertTrue(
-            CertificateInvalidation.is_certificate_invalid(self.user, self.course_id)
+            CertificateInvalidation.has_certificate_invalidation(self.user, self.course_id)
         )
 
         # mark the entry as in-active.
@@ -349,5 +349,5 @@ class CertificateInvalidationTest(SharedModuleStoreTestCase):
 
         # After making the certificate valid method will return false.
         self.assertFalse(
-            CertificateInvalidation.is_certificate_invalid(self.user, self.course_id)
+            CertificateInvalidation.has_certificate_invalidation(self.user, self.course_id)
         )

@@ -105,7 +105,7 @@ from django.utils.http import urlquote_plus
           </div>
           %endif
 
-          %if is_invalid:
+          %if certificate_invalidated:
             <div class="wrapper-msg wrapper-auto-cert">
                     <div class="auto-cert-message">
                       <div class="has-actions">
