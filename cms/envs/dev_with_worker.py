@@ -18,6 +18,15 @@ In two separate processes on devstack:
 from dev import *
 from os import environ
 
+# SERVICE_VARIANT specifies name of the variant used, which decides what JSON
+# configuration files are read during startup.
+SERVICE_VARIANT = os.environ.get('SERVICE_VARIANT', None)
+
+# CONFIG_PREFIX specifies the prefix of the JSON configuration files,
+# based on the service variant. If no variant is use, don't use a
+# prefix.
+CONFIG_PREFIX = SERVICE_VARIANT + "." if SERVICE_VARIANT else ""
+
 ################################# CELERY ######################################
 
 # Require a separate celery worker

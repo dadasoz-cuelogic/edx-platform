@@ -18,7 +18,6 @@ def _ensure_lms_queue():
     This is needed due to the signal that triggers these tasks coming from cms, which does not have settings
     defined that are required for these tasks.
     """
-    print "ensuring lms queue..."
     queues = getattr(settings, 'CELERY_QUEUES', None)
     lms_queue = next((queue for queue in queues if '.lms.' in queue), None)
     return lms_queue
@@ -29,7 +28,6 @@ def update_course_in_cache(course_key):
     """
     Updates the course blocks (in the database) for the specified course.
     """
-    print "in worker! **************"
     course_key = CourseKey.from_string(course_key)
     api.update_course_in_cache(course_key)
 
@@ -39,7 +37,5 @@ def clear_course_from_cache(course_key):
     """
     Deletes the given course from the cache.
     """
-    from .api import clear_course_from_cache
-    print "in worker! **************"
     course_key = CourseKey.from_string(course_key)
     api.clear_course_from_cache(course_key)

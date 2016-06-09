@@ -98,7 +98,7 @@ CELERY_QUEUES = {
 }
 
 # Setup alternate queues, to allow access to cross-process workers
-ALTERNATE_QUEUE_ENVS = environ.get('ALTERNATE_SERVICE_VARIANTS', '').split()
+ALTERNATE_QUEUE_ENVS = os.environ.get('ALTERNATE_SERVICE_VARIANTS', '').split()
 ALTERNATE_QUEUES = [
     DEFAULT_PRIORITY_QUEUE.replace(QUEUE_VARIANT, alternate + '.')
     for alternate in ALTERNATE_QUEUE_ENVS
