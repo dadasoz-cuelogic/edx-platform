@@ -221,7 +221,6 @@ class CertificateisInvalid(WebCertificateTestMixin, ModuleStoreTestCase):
         super(CertificateisInvalid, self).setUp()
 
         self.student = UserFactory()
-        self.student_no_cert = UserFactory()
         self.course = CourseFactory.create(
             org='edx',
             number='verified',
