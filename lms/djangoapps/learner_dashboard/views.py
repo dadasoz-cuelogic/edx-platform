@@ -11,7 +11,10 @@ from edxmako.shortcuts import render_to_response
 from openedx.core.djangoapps.credentials.utils import get_programs_credentials
 from openedx.core.djangoapps.programs.models import ProgramsApiConfig
 from openedx.core.djangoapps.programs import utils
-from utils import FAKE_COURSE_ID_FOR_URL, url_remove_fake_course_id
+from lms.djangoapps.learner_dashboard.utils import (
+    FAKE_COURSE_ID_FOR_URL,
+    url_remove_fake_course_id
+)
 
 
 @login_required
