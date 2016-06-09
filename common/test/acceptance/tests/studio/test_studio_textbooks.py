@@ -5,6 +5,7 @@ from common.test.acceptance.tests.studio.base_studio_test import StudioCourseTes
 from ...pages.studio.textbooks import TextbooksPage
 from ...tests.helpers import disable_animations
 from nose.plugins.attrib import attr
+from nose.tools import set_trace
 
 
 @attr('shard_2')
@@ -50,11 +51,12 @@ class TextbooksTest(StudioCourseTest):
     def test_textbook_page_a11y(self):
         self.textbook_page.upload_new_textbook()
         self.textbook_page.click_view_live_link()
+        self.textbook_page.a11y_audit.config.set_scope([
+            'iframe'
+        ])
         self.textbook_page.a11y_audit.config.set_rules({
             'ignore': [
-                'color-contrast',
-                'skip-link',
-                'link-href',
             ],
         })
+        set_trace()
         self.textbook_page.a11y_audit.check_for_accessibility_errors()
