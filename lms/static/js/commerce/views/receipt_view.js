@@ -39,7 +39,7 @@ var edx = edx || {};
                 courseKey: this.courseKey
             });
 
-            edx.HtmlUtils.setHtml(this.$el, _.template(templateHtml)(context));
+            edx.HtmlUtils.setHtml(this.$el, edx.HtmlUtils.template(templateHtml)(context));
 
             this.trackLinks();
 
