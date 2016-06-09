@@ -210,7 +210,7 @@ define([
                     status: 403,
                     responseJSON:{
                         user_message_url: 'test_url/haha'
-                    }}
+                    }};
                 setupView(singleRunModeList, urls);
                 expect(view.$('.enroll-button').length).toBe(1);
                 expect(view.trackSelectionUrl).toBeDefined();
