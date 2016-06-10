@@ -732,14 +732,17 @@ def _progress(request, course_key, student_id):
     missing_required_verification = enrollment_mode in CourseMode.VERIFIED_MODES and \
         not SoftwareSecurePhotoVerification.user_is_verified(student)
 
-    # If current certificate is invalidated by instructor
-    # then don't show the generate button.
-    certificate_invalidated = certs_api.is_certificate_invalid(student, course_key)
     show_generate_cert_btn = (
         is_active and CourseMode.is_eligible_for_certificate(enrollment_mode)
         and certs_api.cert_generation_enabled(course_key)
-        and not certificate_invalidated
     )
+
+    # If current certificate is invalidated by instructor
+    # then don't show the generate button.
+    certificate_invalidated = False
+    if show_generate_cert_btn and certs_api.is_certificate_invalid(student, course_key):
+        show_generate_cert_btn = False
+        certificate_invalidated = True
 
     context = {
         'course': course,
